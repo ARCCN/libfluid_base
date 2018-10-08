@@ -5,24 +5,22 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 
+#include <cstring>
+#include <string>
+#include <sstream>
+
 #include <event2/thread.h>
 #include <event2/util.h>
 #include <event2/listener.h>
-
-#include <string.h>
 
 #include "fluid/base/BaseOFServer.hh"
 #include "fluid/base/BaseOFConnection.hh"
 #include "fluid/base/EventLoop.hh"
 #include "fluid/TLS.hh"
 
-#include <string>
-#include <sstream>
-#include <sstream>
-
 namespace fluid_base {
 
-static bool evthread_use_pthreads_called = false;
+bool evthread_use_pthreads_called = false;
 
 class BaseOFServer::LibEventBaseOFServer {
 private:
@@ -115,11 +113,19 @@ bool BaseOFServer::start(bool block) {
 
     // Start one thread for each event loop
     // If we're blocking, the first event loop will run in the calling thread
-    for (int i = this->blocking? 1 : 0; i < nthreads; i++) {
+    for (int i = this->blocking ? 1 : 0; i < nthreads; i++) {
+        // Create thread for connections
         pthread_create(&threads[i],
                        NULL,
                        EventLoop::thread_adapter,
                        eventloops[i]);
+
+#if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 12
+        // Init thread name
+        std::ostringstream thread_name;
+        thread_name << "Fluid Server " << i;
+        pthread_setname_np(threads[i], thread_name.str().c_str());
+#endif
     }
 
     // Start the first event loop in the calling thread if we're blocking
@@ -148,7 +154,7 @@ void BaseOFServer::stop() {
 }
 
 bool BaseOFServer::listen(EventLoop* evloop) {
-    struct event_base *base = (struct event_base*) evloop->get_base();;
+    struct event_base *base = (struct event_base*) evloop->get_base();
 
     // Hostname lookup
     struct evutil_addrinfo hints;
