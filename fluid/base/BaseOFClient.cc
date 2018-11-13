@@ -65,8 +65,8 @@ void BaseOFClient::add_connection(int id, const std::string& address,
     server.sin_addr.s_addr = inet_addr(address.c_str());
     server.sin_port = htons(port);
     while (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
-        fprintf(stderr, "Retrying in 5 seconds...\n");
-        sleep(5);
+        // Retry to connect after 100 milliseconds
+        usleep(100);
     }
 
     EventLoop* event_loop = choose_event_loop();

@@ -6,12 +6,17 @@ namespace fluid_base {
 OFClient::OFClient(int thread_num, OFServerSettings ofsc) :
         BaseOFClient(thread_num) {
     this->ofsc = ofsc;
-    this->conn = NULL;
 }
 
 OFClient::~OFClient() {
-    if (conn != NULL)
-        delete conn;
+    this->lock_ofconnections();
+    while (!this->ofconnections.empty()) {
+        OFConnection* ofconn = this->ofconnections.begin()->second;
+        this->ofconnections.erase(this->ofconnections.begin());
+        delete ofconn;
+    }
+    this->ofconnections.clear();
+    this->unlock_ofconnections();
 }
 
 bool OFClient::start() {
@@ -22,14 +27,27 @@ void OFClient::add_connection(int id, const std::string& address, int port) {
     BaseOFClient::add_connection(id, address, port);
 }
 
-void OFClient::stop_conn() {
-    if (conn != NULL)
-        conn->close();
+void OFClient::stop() {
+    // Close all connections
+    this->lock_ofconnections();
+    for (std::map<int, OFConnection*>::iterator it = this->ofconnections.begin();
+         it != this->ofconnections.end();
+         it++) {
+        if (it->second != NULL) {
+            it->second->close();
+        }
+    }
+    this->unlock_ofconnections();
+
+    // Stop BaseOFClient
+    BaseOFClient::stop();
 }
 
-void OFClient::stop() {
-    stop_conn();
-    BaseOFClient::stop();
+OFConnection* OFClient::get_ofconnection(int id) {
+    this->lock_ofconnections();
+    OFConnection* cc = ofconnections[id];
+    this->unlock_ofconnections();
+    return cc;
 }
 
 void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len) {
@@ -149,6 +167,7 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
         return;
     }
 
+    OFConnection* cc;
     int conn_id = c->get_id();
     if (event_type == BaseOFConnection::EVENT_UP) {
         if (ofsc.handshake()) {
@@ -160,11 +179,17 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
             c->send(&msg, 8);
         }
 
-        this->conn = new OFConnection(c, this);
-        connection_callback(this->conn, OFConnection::EVENT_STARTED);
+        cc = new OFConnection(c, this);
+        lock_ofconnections();
+        ofconnections[conn_id] = cc;
+        unlock_ofconnections();
+
+        connection_callback(cc, OFConnection::EVENT_STARTED);
     }
     else if (event_type == BaseOFConnection::EVENT_DOWN) {
-        connection_callback(this->conn, OFConnection::EVENT_CLOSED);
+        cc = get_ofconnection(conn_id);
+        connection_callback(cc, OFConnection::EVENT_CLOSED);
+        cc->close();
     }
 }
 

@@ -62,8 +62,6 @@ public:
     */
     virtual void add_connection(int id, const std::string& address, int port);
 
-    virtual void stop_conn();
-
     /**
     Stop the client. It will close the connection, ask the thead handling
     connections to finish.
@@ -72,6 +70,14 @@ public:
     */
     virtual void stop();
 
+    /**
+    Retrieve an OFConnection object associated with this OFClient with a given
+    id.
+
+    @param id OFConnection id
+    */
+    OFConnection* get_ofconnection(int id);
+
     // Implement your logic here
     virtual void connection_callback(OFConnection* conn, OFConnection::Event event_type) {};
     virtual void message_callback(OFConnection* conn, uint8_t type, void* data, size_t len) {};
@@ -79,7 +85,17 @@ public:
     void free_data(void* data);
 
 protected:
-    OFConnection* conn;
+    //OFConnection* conn;
+    std::map<int, OFConnection*> ofconnections;
+    pthread_mutex_t ofconnections_lock;
+
+    inline void lock_ofconnections() {
+        pthread_mutex_lock(&ofconnections_lock);
+    }
+
+    inline void unlock_ofconnections() {
+        pthread_mutex_unlock(&ofconnections_lock);
+    }
 
 private:
     OFServerSettings ofsc;

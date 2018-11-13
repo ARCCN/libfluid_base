@@ -95,7 +95,6 @@ public:
     virtual void free_data(void* data);
 
 protected:
-    OFServerSettings ofsc;
     std::map<int, OFConnection*> ofconnections;
     std::set<int> unsafe_connection_ids;
     pthread_mutex_t ofconnections_lock;
@@ -108,6 +107,8 @@ protected:
         pthread_mutex_unlock(&ofconnections_lock);
     }
 
+private:
+    OFServerSettings ofsc;
     void base_message_callback(BaseOFConnection* c, void* data, size_t len);
     void base_connection_callback(BaseOFConnection* c, BaseOFConnection::Event event_type);
     static void* check_features_reply(void* arg);
