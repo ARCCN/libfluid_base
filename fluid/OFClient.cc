@@ -3,10 +3,9 @@
 
 namespace fluid_base {
 
-OFClient::OFClient(int thread_num, OFServerSettings ofsc) :
+OFClient::OFClient(int thread_num) :
         BaseOFClient(thread_num) {
     pthread_mutex_init(&ofconnections_lock, NULL);
-    this->ofsc = ofsc;
 }
 
 OFClient::~OFClient() {
@@ -24,8 +23,9 @@ bool OFClient::start() {
     return BaseOFClient::start();
 }
 
-void OFClient::add_connection(int id, const std::string& address, int port
-    ) {
+void OFClient::add_connection(int id, const std::string& address, int port,
+                            OFServerSettings ofsc = OFServerSettings()) {
+    sw_list[id] = ofsc;
     BaseOFClient::add_connection(id, address, port);
 }
 
@@ -171,7 +171,7 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
 
     OFConnection* cc;
     int conn_id = c->get_id();
-    
+
     if (event_type == BaseOFConnection::EVENT_UP) {
         if (sw_list[conn_id].handshake()) {
             struct ofp_hello msg;

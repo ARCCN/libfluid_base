@@ -43,7 +43,7 @@ public:
                       attributed to event loops running on threads on a
                       round-robin fashion.
     */
-    OFClient(int thread_num = 1, OFServerSettings ofsc = OFServerSettings());
+    OFClient(int thread_num = 1);
 
     virtual ~OFClient();
 
@@ -98,7 +98,6 @@ protected:
     }
 
 private:
-    OFServerSettings ofsc;
     std::map<int, OFServerSettings> sw_list; 
     void base_message_callback(BaseOFConnection* c, void* data, size_t len);
     void base_connection_callback(BaseOFConnection* c, BaseOFConnection::Event event_type);
