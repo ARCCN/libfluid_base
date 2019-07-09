@@ -99,6 +99,7 @@ protected:
 
 private:
     OFServerSettings ofsc;
+    std::map<int, OFServerSettings> test; 
     void base_message_callback(BaseOFConnection* c, void* data, size_t len);
     void base_connection_callback(BaseOFConnection* c, BaseOFConnection::Event event_type);
     static void* send_echo(void* arg);
