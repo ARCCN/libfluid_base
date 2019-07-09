@@ -62,7 +62,7 @@ public:
     */
     virtual void add_connection(int id, const std::string& address, int port,
                             OFServerSettings ofsc);
-    void OFClient::
+
     /**
     Stop the client. It will close the connection, ask the thead handling
     connections to finish.
