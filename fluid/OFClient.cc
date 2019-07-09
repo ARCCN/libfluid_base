@@ -23,8 +23,8 @@ bool OFClient::start() {
     return BaseOFClient::start();
 }
 
-void OFClient::add_connection(int id, const std::string& address, int port,
-                            OFServerSettings ofsc = OFServerSettings()) {
+void OFClient::add_connection(OFServerSettings ofsc = OFServerSettings(),
+            int id, const std::string& address, int port) {
     sw_list[id] = ofsc;
     BaseOFClient::add_connection(id, address, port);
 }

@@ -60,9 +60,8 @@ public:
     @param address address to connect to
     @param port port to connect to
     */
-    virtual void add_connection(int id, const std::string& address, int port,
-                            OFServerSettings ofsc = OFServerSettings());
-
+    virtual void add_connection(OFServerSettings ofsc = OFServerSettings(),
+            int id, const std::string& address, int port) {
     /**
     Stop the client. It will close the connection, ask the thead handling
     connections to finish.
