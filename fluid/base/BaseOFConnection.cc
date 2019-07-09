@@ -313,6 +313,7 @@ void BaseOFConnection::LibEventBaseOFConnection::event_cb(struct bufferevent *be
     if (events & (BEV_EVENT_EOF | BEV_EVENT_ERROR)) {
         bufferevent_disable(bev, EV_READ|EV_WRITE);
         c->notify_conn_cb(BaseOFConnection::EVENT_DOWN);
+
     }
 }
 
@@ -349,6 +350,7 @@ void BaseOFConnection::LibEventBaseOFConnection::read_cb(struct bufferevent *bev
 void BaseOFConnection::LibEventBaseOFConnection::close_cb(int fd, short which, void *arg) {
     BaseOFConnection* c = static_cast<BaseOFConnection*>(arg);
     c->do_close();
+
 }
 
 }

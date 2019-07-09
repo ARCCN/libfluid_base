@@ -14,12 +14,6 @@
 
 namespace fluid_base {
 
-struct ConnectionInfo {
-    int id;
-    std::string address;
-    int port;
-    EventLoop* event_loop;
-};
 
 extern bool evthread_use_pthreads_called;
 
@@ -43,7 +37,14 @@ BaseOFClient::BaseOFClient(const int thread_num) {
     }
     current_event_loop = 0;
 }
-
+void BaseOFClient::add_threads(int thread_num) {
+    for (int loop_id = 1; loop_id <= thread_num; loop_id++) {
+        EventLoopThread loop_thread;
+        loop_thread.thread = pthread_t();
+        loop_thread.loop = new EventLoop(loop_id);
+        event_loop_threads.push_back(loop_thread);
+    }
+}
 BaseOFClient::~BaseOFClient() {
     for (int loop_id = 0; loop_id < event_loop_threads.size(); loop_id++) {
         EventLoop* loop = get_loop(loop_id);
@@ -51,12 +52,12 @@ BaseOFClient::~BaseOFClient() {
     }
 }
 
-void BaseOFClient::add_connection(int id, const std::string& address,
+bool BaseOFClient::add_connection(int id, const std::string& address,
                                   int port) {
     int sock;
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
         fprintf(stderr, "Error creating socket");
-        return;
+        return false;
     }
 
     struct sockaddr_in server;
@@ -64,18 +65,20 @@ void BaseOFClient::add_connection(int id, const std::string& address,
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = inet_addr(address.c_str());
     server.sin_port = htons(port);
-    while (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
+    if (connect(sock, (struct sockaddr *) 
+        &server, sizeof(server)) < 0) {
         // Retry to connect after 100 milliseconds
-        usleep(100);
+        return false;
     }
-
+    
     EventLoop* event_loop = choose_event_loop();
-    BaseOFConnection *c = new BaseOFConnection(id,
+    BaseOFConnection * c = new BaseOFConnection(id,
                                                this,
                                                event_loop,
                                                sock,
                                                false,
                                                address);
+    return true;
 }
 
 bool BaseOFClient::start() {
@@ -105,6 +108,7 @@ void BaseOFClient::free_data(void *data) {
 }
 
 void BaseOFClient::stop() {
+
     for (int loop_id = 0; loop_id < event_loop_threads.size(); loop_id++) {
         pthread_t* thread_ptr = get_thread(loop_id);
         EventLoop* loop = get_loop(loop_id);

@@ -1,5 +1,6 @@
 /** @file */
 #ifndef __OFCONNECTION_HH__
+
 #define __OFCONNECTION_HH__
 
 #include <stdint.h>
