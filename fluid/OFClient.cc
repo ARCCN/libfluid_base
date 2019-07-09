@@ -24,7 +24,8 @@ bool OFClient::start() {
     return BaseOFClient::start();
 }
 
-void OFClient::add_connection(int id, const std::string& address, int port) {
+void OFClient::add_connection(int id, const std::string& address, int port
+    ) {
     BaseOFClient::add_connection(id, address, port);
 }
 
@@ -54,11 +55,11 @@ OFConnection* OFClient::get_ofconnection(int id) {
 void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len) {
     uint8_t type = ((uint8_t*) data)[1];
     OFConnection* cc = (OFConnection*) c->get_manager();
-
+    int id = c->get_id();
     // We trust that the other end is using the negotiated protocol
     // version. Should we?
 
-    if (ofsc.liveness_check() and type == OFPT_ECHO_REQUEST) {
+    if (sw_list[id].liveness_check() and type == OFPT_ECHO_REQUEST) {
         uint8_t msg[8];
         memset((void*) msg, 0, 8);
         msg[0] = ((uint8_t*) data)[0];
@@ -68,12 +69,12 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         // TODO: copy echo data
         c->send(msg, 8);
 
-        if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
+        if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
 
-    if (ofsc.handshake() and type == OFPT_HELLO) {
+    if (sw_list[id].handshake() and type == OFPT_HELLO) {
         uint8_t version = ((uint8_t*) data)[0];
-        if (not this->ofsc.supported_versions() & (1 << (version - 1))) {
+        if (not this->sw_list[id].supported_versions() & (1 << (version - 1))) {
             uint8_t msg[12];
             memset((void*) msg, 0, 8);
             msg[0] = version;
@@ -87,7 +88,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
             cc->set_state(OFConnection::STATE_FAILED);
             connection_callback(cc, OFConnection::EVENT_FAILED_NEGOTIATION);
         } else {
-            if (ofsc.is_controller()) {
+            if (sw_list[id].is_controller()) {
                 struct ofp_header msg;
                 msg.version = ((uint8_t*) data)[0];
                 msg.type = OFPT_FEATURES_REQUEST;
@@ -97,18 +98,18 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
             }
         }
 
-        if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
+        if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
 
-    if (ofsc.liveness_check() and type == OFPT_ECHO_REPLY) {
+    if (sw_list[id].liveness_check() and type == OFPT_ECHO_REPLY) {
         if (ntohl(((uint32_t*) data)[1]) == ECHO_XID) {
             cc->set_alive(true);
         }
 
-        if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
+        if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
 
-    if (ofsc.handshake() and !ofsc.is_controller() and type == OFPT_FEATURES_REQUEST) {
+    if (sw_list[id].handshake() and !sw_list[id].is_controller() and type == OFPT_FEATURES_REQUEST) {
         struct ofp_switch_features reply;
 
         cc->set_version(((uint8_t*) data)[0]);
@@ -117,26 +118,26 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         reply.header.type = OFPT_FEATURES_REPLY;
         reply.header.length = htons(sizeof(reply));
         reply.header.xid = ((uint32_t*) data)[1];
-        reply.datapath_id = ofsc.datapath_id();
-        reply.n_buffers = ofsc.n_buffers();
-        reply.n_tables = ofsc.n_tables();
-        reply.auxiliary_id = ofsc.auxiliary_id();
-        reply.capabilities = ofsc.capabilities();
+        reply.datapath_id = sw_list[id].datapath_id();
+        reply.n_buffers = sw_list[id].n_buffers();
+        reply.n_tables = sw_list[id].n_tables();
+        reply.auxiliary_id = sw_list[id].auxiliary_id();
+        reply.capabilities = sw_list[id].capabilities();
         cc->send(&reply, sizeof(reply));
 
-        if (ofsc.liveness_check())
-            c->add_timed_callback(send_echo, ofsc.echo_interval() * 1000, cc);
+        if (sw_list[id].liveness_check())
+            c->add_timed_callback(send_echo, sw_list[id].echo_interval() * 1000, cc);
         connection_callback(cc, OFConnection::EVENT_ESTABLISHED);
 
-        if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
+        if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
 
     // Handle feature replies
-    if (ofsc.handshake() and ofsc.is_controller() and type == OFPT_FEATURES_REPLY) {
+    if (sw_list[id].handshake() and sw_list[id].is_controller() and type == OFPT_FEATURES_REPLY) {
         cc->set_version(((uint8_t*) data)[0]);
         cc->set_state(OFConnection::STATE_RUNNING);
-        if (ofsc.liveness_check())
-            c->add_timed_callback(send_echo, ofsc.echo_interval() * 1000, cc);
+        if (sw_list[id].liveness_check())
+            c->add_timed_callback(send_echo, sw_list[id].echo_interval() * 1000, cc);
         connection_callback(cc, OFConnection::EVENT_ESTABLISHED);
         goto dispatch;
     }
@@ -147,7 +148,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
     // Dispatch a message and goto done
     dispatch:
         message_callback(cc, type, data, len);
-        if (this->ofsc.keep_data_ownership())
+        if (this->sw_list[id].keep_data_ownership())
             this->free_data(data);
         return;
 
@@ -171,9 +172,9 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
     OFConnection* cc;
     int conn_id = c->get_id();
     if (event_type == BaseOFConnection::EVENT_UP) {
-        if (ofsc.handshake()) {
+        if (sw_list[id].handshake()) {
             struct ofp_hello msg;
-            msg.header.version = this->ofsc.max_supported_version();
+            msg.header.version = this->sw_list[id].max_supported_version();
             msg.header.type = OFPT_HELLO;
             msg.header.length = htons(8);
             msg.header.xid = htonl(HELLO_XID);
