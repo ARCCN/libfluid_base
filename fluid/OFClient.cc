@@ -171,10 +171,11 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
 
     OFConnection* cc;
     int conn_id = c->get_id();
+    
     if (event_type == BaseOFConnection::EVENT_UP) {
-        if (sw_list[id].handshake()) {
+        if (sw_list[conn_id].handshake()) {
             struct ofp_hello msg;
-            msg.header.version = this->sw_list[id].max_supported_version();
+            msg.header.version = this->sw_list[conn_id].max_supported_version();
             msg.header.type = OFPT_HELLO;
             msg.header.length = htons(8);
             msg.header.xid = htonl(HELLO_XID);
