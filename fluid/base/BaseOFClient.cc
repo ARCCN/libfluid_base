@@ -49,7 +49,7 @@ void BaseOFClient::add_connection(int id, const std::string& address,
                                   int port) {
 
     client_conn_info[id] = ConnectionInfo();
-    
+    int sock;
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
         fprintf(stderr, "Error creating socket");
         return;
