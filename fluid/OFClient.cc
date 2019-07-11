@@ -17,6 +17,8 @@ OFClient::~OFClient() {
     }
     this->ofconnections.clear();
     this->unlock_ofconnections();
+    sw_list.erase(sw_list.begin(), sw_list.end());
+    delete sw_list;
 }
 
 bool OFClient::start() {
@@ -41,6 +43,7 @@ void OFClient::stop() {
     }
     this->unlock_ofconnections();
     sw_list.erase(sw_list.begin(), sw_list.end());
+    delete sw_list;
     // Stop BaseOFClient
     BaseOFClient::stop();
 }
@@ -190,6 +193,7 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
         connection_callback(cc, OFConnection::EVENT_STARTED);
     }
     else if (event_type == BaseOFConnection::EVENT_DOWN) {
+        sw_list.erase(conn_id);
         cc = get_ofconnection(conn_id);
         connection_callback(cc, OFConnection::EVENT_CLOSED);
         cc->close();
