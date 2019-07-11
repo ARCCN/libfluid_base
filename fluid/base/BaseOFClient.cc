@@ -78,11 +78,11 @@ void BaseOFClient::remove_connection(int id) {
     shutdown(client_conn_info[id].sock, 2); //stop receiving and sending data
     close(client_conn_info[id].sock);
 
-    client_conn_info[id]->c.close();
+    client_conn_info[id].c->close();
     delete client_conn_info[id].c;
-    client_conn_info[id]->event_loop.stop(); 
+    client_conn_info[id].event_loop->stop(); 
     delete client_conn_info.event_loop;
-    client_conn_info.erase(id);
+    client_conn_info[id].erase(id);
 
 
 }
