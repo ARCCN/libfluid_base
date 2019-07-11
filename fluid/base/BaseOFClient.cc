@@ -81,8 +81,8 @@ void BaseOFClient::remove_connection(int id) {
     client_conn_info[id].c->close();
     delete client_conn_info[id].c;
     client_conn_info[id].event_loop->stop(); 
-    delete client_conn_info.event_loop;
-    client_conn_info[id].erase(id);
+    delete client_conn_info[id].event_loop;
+    client_conn_info.erase(id);
 
 
 }
