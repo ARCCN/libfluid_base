@@ -194,6 +194,7 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
     }
     else if (event_type == BaseOFConnection::EVENT_DOWN) {
         sw_list.erase(conn_id);
+        std::cout << "SWITCH DOWN MAP freed" << std::endl;
         cc = get_ofconnection(conn_id);
         connection_callback(cc, OFConnection::EVENT_CLOSED);
         cc->close();
