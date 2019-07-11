@@ -1,6 +1,7 @@
 #include "OFClient.hh"
 #include "fluid/base/of.hh"
 
+#include <iostream>
 namespace fluid_base {
 
 OFClient::OFClient(int thread_num) :
