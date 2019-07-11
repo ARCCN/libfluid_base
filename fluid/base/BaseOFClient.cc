@@ -60,7 +60,8 @@ void BaseOFClient::add_connection(int id, const std::string& address,
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = inet_addr(address.c_str());
     server.sin_port = htons(port);
-    while (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
+    while (connect(client_conn_info[id].sock, (struct sockaddr *) 
+        &server, sizeof(server)) < 0) {
         // Retry to connect after 100 milliseconds
         usleep(100);
     }
@@ -69,7 +70,7 @@ void BaseOFClient::add_connection(int id, const std::string& address,
     BaseOFConnection *c = new BaseOFConnection(id,
                                                this,
                                                client_conn_info[id].event_loop,
-                                               sock,
+                                               client_conn_info[id].sock,
                                                false,
                                                address);
 }
