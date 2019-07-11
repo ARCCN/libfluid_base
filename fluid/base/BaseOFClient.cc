@@ -74,7 +74,7 @@ void BaseOFClient::add_connection(int id, const std::string& address,
                                                address);
 }
 
-void remove_connection(int id) {
+void BaseOFClient::remove_connection(int id) {
     shutdown(client_conn_info[id].sock, 2); //stop receiving and sending data
     close(client_conn_info[id].sock);
 
