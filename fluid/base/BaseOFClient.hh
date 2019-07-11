@@ -23,6 +23,7 @@ struct ConnectionInfo {
     // std::string address; //shall we copy a string???
     int port;
     EventLoop* event_loop;
+    BaseOFConnection *c;
 };
 
 /**
@@ -79,7 +80,7 @@ public:
 
 private:
     std::vector<EventLoopThread> event_loop_threads;
-    std::map<int, ConnectionInfo> client_conn_info;
+    std::map<int, ConnectionInfo> client_conn_info; // semafors?
     int current_event_loop;
 
     inline pthread_t* get_thread(int loop_id);

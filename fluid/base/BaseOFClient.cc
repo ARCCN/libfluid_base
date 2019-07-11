@@ -65,9 +65,8 @@ void BaseOFClient::add_connection(int id, const std::string& address,
         // Retry to connect after 100 milliseconds
         usleep(100);
     }
-
     client_conn_info[id].event_loop = choose_event_loop();
-    BaseOFConnection *c = new BaseOFConnection(id,
+    client_conn_info[id].c = new BaseOFConnection(id,
                                                this,
                                                client_conn_info[id].event_loop,
                                                client_conn_info[id].sock,
@@ -76,6 +75,15 @@ void BaseOFClient::add_connection(int id, const std::string& address,
 }
 
 void remove_connection(int id) {
+    shutdown(client_conn_info[id].sock, 2); //stop receiving and sending data
+    close(client_conn_info[id].sock);
+
+    client_conn_info[id]->c.close();
+    delete client_conn_info[id].c;
+    client_conn_info[id]->event_loop.stop(); 
+    delete client_conn_info.event_loop;
+    client_conn_info.erase(id);
+
 
 }
 bool BaseOFClient::start() {
