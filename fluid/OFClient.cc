@@ -18,7 +18,7 @@ OFClient::~OFClient() {
     this->ofconnections.clear();
     this->unlock_ofconnections();
     sw_list.erase(sw_list.begin(), sw_list.end());
-    delete sw_list;
+    
 }
 
 bool OFClient::start() {
@@ -43,7 +43,7 @@ void OFClient::stop() {
     }
     this->unlock_ofconnections();
     sw_list.erase(sw_list.begin(), sw_list.end());
-    delete sw_list;
+    
     // Stop BaseOFClient
     BaseOFClient::stop();
 }
