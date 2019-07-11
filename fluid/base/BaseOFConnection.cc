@@ -272,6 +272,7 @@ void BaseOFConnection::notify_conn_cb(BaseOFConnection::Event event_type) {
 }
 
 void BaseOFConnection::do_close() {
+    fprintf(stderr, "DO_CLOSE\n");
     // Stop all timed callbacks
     struct timed_callback* tc;
     for(std::vector<struct timed_callback*>::iterator it = timed_callbacks.begin();
@@ -347,8 +348,10 @@ void BaseOFConnection::LibEventBaseOFConnection::read_cb(struct bufferevent *bev
 }
 
 void BaseOFConnection::LibEventBaseOFConnection::close_cb(int fd, short which, void *arg) {
+    fprintf(stderr, "CLOSE_CB\n");
     BaseOFConnection* c = static_cast<BaseOFConnection*>(arg);
     c->do_close();
+
 }
 
 }

@@ -85,7 +85,7 @@ void BaseOFClient::remove_connection(int id) {
 }
 
 bool BaseOFClient::start() {
-    fprintf(stderr, "base of client started");
+    fprintf(stderr, "base of client started \n");
     // Start one thread for each event loop
     for (int loop_id = 0; loop_id < event_loop_threads.size(); loop_id++) {
         // Create thread for connections
