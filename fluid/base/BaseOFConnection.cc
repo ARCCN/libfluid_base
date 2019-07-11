@@ -312,8 +312,10 @@ void BaseOFConnection::LibEventBaseOFConnection::event_cb(struct bufferevent *be
     if (events & BEV_EVENT_ERROR)
         perror("Connection error");
     if (events & (BEV_EVENT_EOF | BEV_EVENT_ERROR)) {
+        fprintf(stderr, "BEV ERROR|EOF EVENT DOWN\n");
         bufferevent_disable(bev, EV_READ|EV_WRITE);
         c->notify_conn_cb(BaseOFConnection::EVENT_DOWN);
+
     }
 }
 
