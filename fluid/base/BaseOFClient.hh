@@ -20,7 +20,7 @@ struct EventLoopThread {
 
 struct ConnectionInfo {
     int sock;
-    std::string address;
+    // std::string address; //shall we copy a string???
     int port;
     EventLoop* event_loop;
 };

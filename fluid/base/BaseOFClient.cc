@@ -49,8 +49,8 @@ void BaseOFClient::add_connection(int id, const std::string& address,
                                   int port) {
 
     client_conn_info[id] = ConnectionInfo();
-    int sock;
-    if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+    client_conn_info[id].port = port;
+    if ((client_conn_info[id].sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
         fprintf(stderr, "Error creating socket");
         return;
     }
@@ -65,10 +65,10 @@ void BaseOFClient::add_connection(int id, const std::string& address,
         usleep(100);
     }
 
-    EventLoop* event_loop = choose_event_loop();
+    client_conn_info[id].event_loop = choose_event_loop();
     BaseOFConnection *c = new BaseOFConnection(id,
                                                this,
-                                               event_loop,
+                                               client_conn_info[id].event_loop,
                                                sock,
                                                false,
                                                address);
