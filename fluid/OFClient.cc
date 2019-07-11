@@ -40,7 +40,7 @@ void OFClient::stop() {
         }
     }
     this->unlock_ofconnections();
-    sw_list.erase(sw_list.start(), sw_list.stop());
+    sw_list.erase(sw_list.begin(), sw_list.end());
     // Stop BaseOFClient
     BaseOFClient::stop();
 }
