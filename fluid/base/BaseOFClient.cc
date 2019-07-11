@@ -78,9 +78,9 @@ void BaseOFClient::add_connection(int id, const std::string& address,
 
 void BaseOFClient::remove_connection(int id) {
     client_conn_info[id].c->close();
-    delete client_conn_info[id].c;
-    client_conn_info[id].event_loop->stop(); 
-    delete client_conn_info[id].event_loop;
+    // delete client_conn_info[id].c;
+    // client_conn_info[id].event_loop->stop(); 
+    // delete client_conn_info[id].event_loop;
     client_conn_info.erase(id);
 }
 
