@@ -48,6 +48,7 @@ BaseOFClient::~BaseOFClient() {
 void BaseOFClient::add_connection(int id, const std::string& address,
                                   int port) {
 
+    client_conn_info[id].id = id;
     client_conn_info[id] = ConnectionInfo();
     client_conn_info[id].port = port;
     if ((client_conn_info[id].sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
@@ -119,6 +120,11 @@ void BaseOFClient::stop() {
 
         loop->stop();
         pthread_join(*thread_ptr, NULL);
+    }
+    //close clients connections
+    for (auto cl_con = client_conn_info.begin(); 
+                cl_con != client_conn_info.end(); ++cl_con) {
+        remove_connection(cl_con->second.id);
     }
 }
 

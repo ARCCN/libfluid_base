@@ -19,6 +19,7 @@ struct EventLoopThread {
 };
 
 struct ConnectionInfo {
+    int id;
     int sock;
     // std::string address; //shall we copy a string???
     int port;
