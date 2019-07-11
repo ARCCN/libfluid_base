@@ -14,12 +14,6 @@
 
 namespace fluid_base {
 
-struct ConnectionInfo {
-    int id;
-    std::string address;
-    int port;
-    EventLoop* event_loop;
-};
 
 extern bool evthread_use_pthreads_called;
 
@@ -53,7 +47,9 @@ BaseOFClient::~BaseOFClient() {
 
 void BaseOFClient::add_connection(int id, const std::string& address,
                                   int port) {
-    int sock;
+
+    client_conn_info[id] = ConnectionInfo();
+    
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
         fprintf(stderr, "Error creating socket");
         return;
@@ -78,6 +74,9 @@ void BaseOFClient::add_connection(int id, const std::string& address,
                                                address);
 }
 
+void remove_connection(int id) {
+
+}
 bool BaseOFClient::start() {
     // Start one thread for each event loop
     for (int loop_id = 0; loop_id < event_loop_threads.size(); loop_id++) {

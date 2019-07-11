@@ -1,7 +1,7 @@
 #include "OFClient.hh"
 #include "fluid/base/of.hh"
 
-#include <iostream>
+// #include <iostream>
 namespace fluid_base {
 
 OFClient::OFClient(int thread_num) :
@@ -31,6 +31,10 @@ void OFClient::add_connection(int id, const std::string& address, int port,
     sw_list[id] = ofsc;
     BaseOFClient::add_connection(id, address, port);
 }
+
+// void OFClient::remove_connection(int id, const std::string& address, int port){
+    
+// }
 
 void OFClient::stop() {
     // Close all connections
