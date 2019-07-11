@@ -143,6 +143,7 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
         if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
     }
 
+     // the use of this here???
     if (ofsc.handshake() and !ofsc.is_controller() and type == OFPT_FEATURES_REQUEST) {
         struct ofp_switch_features reply;
 
