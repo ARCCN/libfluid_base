@@ -268,8 +268,15 @@ void BaseOFConnection::notify_msg_cb(void* data, size_t n) {
 }
 
 void BaseOFConnection::notify_conn_cb(BaseOFConnection::Event event_type) {
-    fprintf(stderr, "EVENT HAPPENED \n");
-
+    if (event_type == BaseOFConnection::EVENT_CLOSED) {
+        fprintf(stderr, "BaseOFConnection::EVENT_CLOSED \n");
+    }
+    if (event_type == BaseOFConnection::EVENT_DOWN) {
+        fprintf(stderr, "BaseOFConnection::EVENT_DOWN \n");
+    }
+    if (event_type == BaseOFConnection::EVENT_UP) {
+        fprintf(stderr, "BaseOFConnection::EVENT_UP \n");
+    }
     ofhandler->base_connection_callback(this, event_type);
 }
 
