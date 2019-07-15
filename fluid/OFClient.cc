@@ -32,7 +32,7 @@ void OFClient::add_connection(int id, const std::string& address, int port,
 }
 
 void OFClient::remove_connection(int id){
-    BaseOFClient::remove_connection(id);
+    // BaseOFClient::remove_connection(id);
 }
 
 void OFClient::stop() {
