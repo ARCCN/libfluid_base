@@ -2,6 +2,7 @@
 #include "fluid/base/of.hh"
 
 #include <ugcs/vsm/defs.h>
+#include <stdint.h>
 namespace fluid_base {
 
 OFClient::OFClient(int thread_num) :
