@@ -219,7 +219,7 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
         connection_callback(cc, OFConnection::EVENT_CLOSED);
         cc->close();
         lock_ofconnections();
-        ofconnections.erase(id);
+        ofconnections.erase(conn_id);
         unlock_ofconnections();
     }
 }
@@ -234,7 +234,7 @@ void* OFClient::send_echo(void* arg) {
     if (!cc->is_alive()) {
         cc->close();
         this->lock_ofconnections();
-        ofconnections.erase(cc.get_id); 
+        ofconnections.erase(cc.get_id()); 
         this->unlock_ofconnections();
         cc->get_ofhandler()->connection_callback(cc, OFConnection::EVENT_DEAD);
         return NULL;
