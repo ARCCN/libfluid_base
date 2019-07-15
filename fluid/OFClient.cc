@@ -180,6 +180,7 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
     int conn_id = c->get_id();
 
     if (event_type == BaseOFConnection::EVENT_UP) {
+        fprintf(stderr, "OFCLIENT EVENT_UP EVENT_UP \n");
         if (sw_list[conn_id].handshake()) {
             struct ofp_hello msg;
             msg.header.version = this->sw_list[conn_id].max_supported_version();
@@ -197,7 +198,7 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
         connection_callback(cc, OFConnection::EVENT_STARTED);
     }
     else if (event_type == BaseOFConnection::EVENT_DOWN) {
-        fprintf(stderr, "OFCLIENT EVENT_DOWN OFCLIENT EVENT_DOWN OFCLIENT EVENT_DOWN OFCLIENT EVENT_DOWN\n");
+        fprintf(stderr, "OFCLIENT EVENT_DOWN OFCLIENT EVENT_DOWN \n");
         sw_list.erase(conn_id);
         cc = get_ofconnection(conn_id);
         connection_callback(cc, OFConnection::EVENT_CLOSED);

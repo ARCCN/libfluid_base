@@ -91,6 +91,7 @@ protected:
     std::map<int, OFConnection*> ofconnections;
     pthread_mutex_t ofconnections_lock;
 
+    std::map<int, OFServerSettings> sw_list; 
     inline void lock_ofconnections() {
         pthread_mutex_lock(&ofconnections_lock);
     }
@@ -100,7 +101,7 @@ protected:
     }
 
 private:
-    std::map<int, OFServerSettings> sw_list; 
+    
     void base_message_callback(BaseOFConnection* c, void* data, size_t len);
     void base_connection_callback(BaseOFConnection* c, BaseOFConnection::Event event_type);
     static void* send_echo(void* arg);
