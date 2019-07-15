@@ -233,9 +233,9 @@ void* OFClient::send_echo(void* arg) {
 
     if (!cc->is_alive()) {
         cc->close();
-        this->lock_ofconnections();
-        ofconnections.erase(cc.get_id()); 
-        this->unlock_ofconnections();
+        lock_ofconnections();
+        ofconnections.erase(cc->get_id()); 
+        unlock_ofconnections();
         cc->get_ofhandler()->connection_callback(cc, OFConnection::EVENT_DEAD);
         return NULL;
     }
