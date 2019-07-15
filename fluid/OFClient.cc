@@ -17,8 +17,7 @@ OFClient::~OFClient() {
     }
     this->ofconnections.clear();
     this->unlock_ofconnections();
-    sw_list.erase(sw_list.begin(), sw_list.end());
-    
+    this->sw_list.clear();
 }
 
 bool OFClient::start() {
@@ -27,12 +26,15 @@ bool OFClient::start() {
 
 void OFClient::add_connection(int id, const std::string& address, int port,
                             OFServerSettings ofsc) {
-    sw_list[id] = ofsc;
-    // BaseOFClient::add_connection(id, address, port);
+    this->sw_list[id] = ofsc;
+    BaseOFClient::add_connection(id, address, port);
 }
 
 void OFClient::remove_connection(int id){
-    // BaseOFClient::remove_connection(id);
+    this->lock_ofconnections();
+    ofconnections[id]->close();
+    this->unlock_ofconnections();
+    this->sw_list.erase(id);
 }
 
 void OFClient::stop() {
@@ -46,7 +48,7 @@ void OFClient::stop() {
         }
     }
     this->unlock_ofconnections();
-    sw_list.erase(sw_list.begin(), sw_list.end());
+    this->sw_list.clear();
     
     // Stop BaseOFClient
     BaseOFClient::stop();

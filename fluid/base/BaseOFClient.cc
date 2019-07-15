@@ -48,10 +48,11 @@ BaseOFClient::~BaseOFClient() {
 void BaseOFClient::add_connection(int id, const std::string& address,
                                   int port) {
 
-    client_conn_info[id].id = id;
-    client_conn_info[id] = ConnectionInfo();
-    client_conn_info[id].port = port;
-    if ((client_conn_info[id].sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+    // client_conn_info[id].id = id;
+    // client_conn_info[id] = ConnectionInfo();
+    // client_conn_info[id].port = port;
+    int sock;
+    if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
         fprintf(stderr, "Error creating socket");
         return;
     }
@@ -61,23 +62,23 @@ void BaseOFClient::add_connection(int id, const std::string& address,
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = inet_addr(address.c_str());
     server.sin_port = htons(port);
-    while (connect(client_conn_info[id].sock, (struct sockaddr *) 
+    while (connect(sock, (struct sockaddr *) 
         &server, sizeof(server)) < 0) {
         // Retry to connect after 100 milliseconds
         usleep(100);
     }
     
-    client_conn_info[id].event_loop = choose_event_loop();
-    client_conn_info[id].c = new BaseOFConnection(id,
+    EventLoop* event_loop = choose_event_loop();
+    BaseOFConnection * c = new BaseOFConnection(id,
                                                this,
-                                               client_conn_info[id].event_loop,
-                                               client_conn_info[id].sock,
+                                               event_loop,
+                                               sock,
                                                false,
                                                address);
 }
 
 void BaseOFClient::remove_connection(int id) {
-    client_conn_info[id].c->close();
+    // client_conn_info[id].c->close();
     // delete client_conn_info[id].c;
     // client_conn_info[id].event_loop->stop(); 
     // delete client_conn_info[id].event_loop;
@@ -119,11 +120,6 @@ void BaseOFClient::stop() {
 
         loop->stop();
         pthread_join(*thread_ptr, NULL);
-    }
-    //close clients connections
-    for (auto cl_con = client_conn_info.begin(); 
-                cl_con != client_conn_info.end(); ++cl_con) {
-        remove_connection(cl_con->second.id);
     }
 }
 
