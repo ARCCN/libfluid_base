@@ -1,7 +1,5 @@
 #include "OFClient.hh"
 #include "fluid/base/of.hh"
-
-// #include <endian.h>
 #include <sys/param.h>
 
 uint64_t htonll(uint64_t n)
@@ -12,6 +10,8 @@ uint64_t htonll(uint64_t n)
     return (((uint64_t)htonl(n)) << 32) + htonl(n >> 32);
 #endif
 }
+
+
 namespace fluid_base {
 
 OFClient::OFClient(int thread_num) :
@@ -44,6 +44,7 @@ void OFClient::add_connection(int id, const std::string& address, int port,
 void OFClient::remove_connection(int id){
     this->lock_ofconnections();
     ofconnections[id]->close();
+    ofconnections.erase(id);
     this->unlock_ofconnections();
     this->sw_list.erase(id);
 }
@@ -57,6 +58,7 @@ void OFClient::stop() {
         if (it->second != NULL) {
             it->second->close();
         }
+        this->ofconnections.erase(it);
     }
     this->unlock_ofconnections();
     this->sw_list.clear();
@@ -216,6 +218,9 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
         cc = get_ofconnection(conn_id);
         connection_callback(cc, OFConnection::EVENT_CLOSED);
         cc->close();
+        lock_ofconnections();
+        ofconnections.erase(id);
+        unlock_ofconnections();
     }
 }
 
@@ -228,6 +233,9 @@ void* OFClient::send_echo(void* arg) {
 
     if (!cc->is_alive()) {
         cc->close();
+        this->lock_ofconnections();
+        ofconnections.erase(cc.get_id); 
+        this->unlock_ofconnections();
         cc->get_ofhandler()->connection_callback(cc, OFConnection::EVENT_DEAD);
         return NULL;
     }
