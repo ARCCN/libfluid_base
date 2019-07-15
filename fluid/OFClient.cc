@@ -1,7 +1,7 @@
 #include "OFClient.hh"
 #include "fluid/base/of.hh"
 
-#include <endian.h>
+// #include <endian.h>
 namespace fluid_base {
 
 OFClient::OFClient(int thread_num) :
@@ -128,11 +128,11 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         reply.header.type = OFPT_FEATURES_REPLY;
         reply.header.length = htons(sizeof(reply));
         reply.header.xid = ((uint32_t*) data)[1];
-        reply.datapath_id = hton(sw_list[id].datapath_id());
-        reply.n_buffers = hton(sw_list[id].n_buffers()); //add htonl?
-        reply.n_tables = hton(sw_list[id].n_tables()); // add htonl? htons?
-        reply.auxiliary_id = hton(sw_list[id].auxiliary_id());
-        reply.capabilities = hton(sw_list[id].capabilities());
+        reply.datapath_id = htonll(sw_list[id].datapath_id());
+        reply.n_buffers = htonl(sw_list[id].n_buffers()); //add htonl?
+        reply.n_tables = htonl(sw_list[id].n_tables()); // add htonl? htons?
+        reply.auxiliary_id = sw_list[id].auxiliary_id();
+        reply.capabilities = htonl(sw_list[id].capabilities());
         cc->send(&reply, sizeof(reply));
 
         if (sw_list[id].liveness_check())
