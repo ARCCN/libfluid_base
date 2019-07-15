@@ -1,8 +1,7 @@
 #include "OFClient.hh"
 #include "fluid/base/of.hh"
 
-#include <ugcs/vsm/defs.h>
-#include <stdint.h>
+#include <endian.h>
 namespace fluid_base {
 
 OFClient::OFClient(int thread_num) :
