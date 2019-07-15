@@ -231,11 +231,8 @@ void OFClient::free_data(void* data) {
 void* OFClient::send_echo(void* arg) {
     OFConnection* cc = static_cast<OFConnection*>(arg);
 
-    if (!cc->is_alive()) {
+    if (!cc->is_alive()) { //ERASE?
         cc->close();
-        lock_ofconnections();
-        ofconnections.erase(cc->get_id()); 
-        unlock_ofconnections();
         cc->get_ofhandler()->connection_callback(cc, OFConnection::EVENT_DEAD);
         return NULL;
     }
@@ -247,7 +244,7 @@ void* OFClient::send_echo(void* arg) {
     ((uint16_t*) msg)[1] = htons(8);
     ((uint32_t*) msg)[1] = htonl(ECHO_XID);
 
-    cc->set_alive(false);
+    cc->set_alive(false);//????
     cc->send(msg, 8);
 
     return NULL;
