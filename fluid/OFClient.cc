@@ -127,7 +127,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         reply.header.type = OFPT_FEATURES_REPLY;
         reply.header.length = htons(sizeof(reply));
         reply.header.xid = ((uint32_t*) data)[1];
-        reply.datapath_id = htonl(sw_list[id].datapath_id());
+        reply.datapath_id = htons(sw_list[id].datapath_id());
         reply.n_buffers = sw_list[id].n_buffers(); //add htonl?
         reply.n_tables = sw_list[id].n_tables(); // add htonl? htons?
         reply.auxiliary_id = sw_list[id].auxiliary_id();
