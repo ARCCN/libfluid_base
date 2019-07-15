@@ -268,7 +268,7 @@ void BaseOFConnection::notify_msg_cb(void* data, size_t n) {
 }
 
 void BaseOFConnection::notify_conn_cb(BaseOFConnection::Event event_type) {
-    fprintf(stderr, "EVENT HAPPENED \n");
+    // fprintf(stderr, "EVENT HAPPENED \n");
 
     ofhandler->base_connection_callback(this, event_type);
 }
