@@ -67,7 +67,7 @@ public:
     @param address address to connect to
     @param port port to connect to
     */
-    virtual void add_connection(int id, const std::string& address, int port,
+    virtual bool add_connection(int id, const std::string& address, int port,
                             OFServerSettings ofsc);
     virtual void remove_connection(int id);
     
@@ -99,16 +99,16 @@ protected:
     pthread_mutex_t ofconnections_lock;
 
     std::map<int, OFServerSettings> sw_list; 
-    std::map<int, ConnectionInfo> conn_info_list;
-    pthread_mutex_t conn_info_list_lock;
+    // std::map<int, ConnectionInfo> conn_info_list;
+    // pthread_mutex_t conn_info_list_lock;
 
-    inline void lock_ofconnections() {
-        pthread_mutex_lock(&ofconnections_lock);
-    }
+    // inline void lock_ofconnections() {
+    //     pthread_mutex_lock(&ofconnections_lock);
+    // }
 
-    inline void unlock_ofconnections() {
-        pthread_mutex_unlock(&ofconnections_lock);
-    }
+    // inline void unlock_ofconnections() {
+    //     pthread_mutex_unlock(&ofconnections_lock);
+    // }
 
     inline void lock_conn_info() {
         pthread_mutex_lock(&conn_info_list_lock);
