@@ -54,7 +54,7 @@ bool BaseOFClient::add_connection(int id, const std::string& address,
     int sock;
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
         fprintf(stderr, "Error creating socket");
-        return;
+        return false;
     }
 
     struct sockaddr_in server;
