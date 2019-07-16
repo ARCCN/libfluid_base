@@ -25,6 +25,13 @@ Classes for creating an OpenFlow client that creates connections and handles
 events.
 */
 namespace fluid_base {
+
+struct ConnectionInfo {
+    int id;
+    int sock;
+    std::string address;
+    int port;
+};
 /**
 An OFClient manages an OpenFlow outgoing connection and abstract events through
 callbacks. It provides some of the basic functionalities: OpenFlow connection
@@ -92,12 +99,23 @@ protected:
     pthread_mutex_t ofconnections_lock;
 
     std::map<int, OFServerSettings> sw_list; 
+    std::map<int, ConnectionInfo> conn_info_list;
+    pthread_mutex_t conn_info_list_lock;
+
     inline void lock_ofconnections() {
         pthread_mutex_lock(&ofconnections_lock);
     }
 
     inline void unlock_ofconnections() {
         pthread_mutex_unlock(&ofconnections_lock);
+    }
+
+    inline void lock_conn_info() {
+        pthread_mutex_lock(&conn_info_list_lock);
+    }
+
+    inline void unlock_conn_info() {
+        pthread_mutex_unlock(&conn_info_list_lock);
     }
 
 private:

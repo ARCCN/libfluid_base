@@ -35,10 +35,14 @@ bool OFClient::start() {
     return BaseOFClient::start();
 }
 
-void OFClient::add_connection(int id, const std::string& address, int port,
+bool OFClient::add_connection(int id, const std::string& address, int port,
                             OFServerSettings ofsc) {
-    this->sw_list[id] = ofsc;
-    BaseOFClient::add_connection(id, address, port);
+    
+    if (BaseOFClient::add_connection(id, address, port)) {
+        this->sw_list[id] = ofsc;
+        return true; 
+    }
+    return false; 
 }
 
 void OFClient::remove_connection(int id){
@@ -195,7 +199,7 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
     int conn_id = c->get_id();
 
     if (event_type == BaseOFConnection::EVENT_UP) {
-        fprintf(stderr, "OFCLIENT EVENT_UP EVENT_UP \n");
+        fprintf(stderr, "OFCLIENT EVENT_UP \n");
         if (sw_list[conn_id].handshake()) {
             struct ofp_hello msg;
             msg.header.version = this->sw_list[conn_id].max_supported_version();
@@ -213,7 +217,7 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
         connection_callback(cc, OFConnection::EVENT_STARTED);
     }
     else if (event_type == BaseOFConnection::EVENT_DOWN) {
-        fprintf(stderr, "OFCLIENT EVENT_DOWN OFCLIENT EVENT_DOWN \n");
+        fprintf(stderr, "OFCLIENT EVENT_DOWN \n");
         sw_list.erase(conn_id);
         cc = get_ofconnection(conn_id);
         connection_callback(cc, OFConnection::EVENT_CLOSED);

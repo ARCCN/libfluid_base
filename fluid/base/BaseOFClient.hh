@@ -18,14 +18,6 @@ struct EventLoopThread {
     EventLoop* loop;
 };
 
-struct ConnectionInfo {
-    int id;
-    int sock;
-    // std::string address; //shall we copy a string???
-    int port;
-    EventLoop* event_loop;
-    BaseOFConnection *c;
-};
 
 /**
 A BaseOFClient manages the very basic functions of an OpenFlow client. It
@@ -59,7 +51,7 @@ public:
     @param address address to connect to
     @param port port to connect to
     */
-    virtual void add_connection(int id, const std::string& address, int port);
+    virtual bool add_connection(int id, const std::string& address, int port);
     virtual void remove_connection(int id);
     /**
     Stop the client. It will close the connection and signal the event loop to

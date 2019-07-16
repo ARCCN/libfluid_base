@@ -45,7 +45,7 @@ BaseOFClient::~BaseOFClient() {
     }
 }
 
-void BaseOFClient::add_connection(int id, const std::string& address,
+bool BaseOFClient::add_connection(int id, const std::string& address,
                                   int port) {
 
     // client_conn_info[id].id = id;
@@ -62,11 +62,10 @@ void BaseOFClient::add_connection(int id, const std::string& address,
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = inet_addr(address.c_str());
     server.sin_port = htons(port);
-    while (connect(sock, (struct sockaddr *) 
-        &server, sizeof(server)) < 0) {
-        // Retry to connect after 100 milliseconds
-        usleep(100);
-    }
+    if (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
+        fprintf(stderr, "UNABLE TO CONNECT.\n");
+        return false;
+    }  
     
     EventLoop* event_loop = choose_event_loop();
     BaseOFConnection * c = new BaseOFConnection(id,
@@ -75,6 +74,7 @@ void BaseOFClient::add_connection(int id, const std::string& address,
                                                sock,
                                                false,
                                                address);
+    return true;
 }
 
 void BaseOFClient::remove_connection(int id) {
