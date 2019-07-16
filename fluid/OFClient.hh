@@ -102,21 +102,21 @@ protected:
     // std::map<int, ConnectionInfo> conn_info_list;
     // pthread_mutex_t conn_info_list_lock;
 
-    // inline void lock_ofconnections() {
-    //     pthread_mutex_lock(&ofconnections_lock);
-    // }
-
-    // inline void unlock_ofconnections() {
-    //     pthread_mutex_unlock(&ofconnections_lock);
-    // }
-
-    inline void lock_conn_info() {
-        pthread_mutex_lock(&conn_info_list_lock);
+    inline void lock_ofconnections() {
+        pthread_mutex_lock(&ofconnections_lock);
     }
 
-    inline void unlock_conn_info() {
-        pthread_mutex_unlock(&conn_info_list_lock);
+    inline void unlock_ofconnections() {
+        pthread_mutex_unlock(&ofconnections_lock);
     }
+
+    // inline void lock_conn_info() {
+    //     pthread_mutex_lock(&conn_info_list_lock);
+    // }
+
+    // inline void unlock_conn_info() {
+    //     pthread_mutex_unlock(&conn_info_list_lock);
+    // }
 
 private:
     
