@@ -110,13 +110,13 @@ protected:
         pthread_mutex_unlock(&ofconnections_lock);
     }
 
-    inline void lock_conn_info() {
-        pthread_mutex_lock(&conn_info_list_lock);
-    }
+    // inline void lock_conn_info() {
+    //     pthread_mutex_lock(&conn_info_list_lock);
+    // }
 
-    inline void unlock_conn_info() {
-        pthread_mutex_unlock(&conn_info_list_lock);
-    }
+    // inline void unlock_conn_info() {
+    //     pthread_mutex_unlock(&conn_info_list_lock);
+    // }
 
 private:
     
