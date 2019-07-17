@@ -50,6 +50,7 @@ void OFClient::remove_connection(int id){
     ofconnections[id]->close();
     ofconnections.erase(id);
     this->unlock_ofconnections();
+    fprintf(stderr, "ERASED OFConnection");
     this->sw_list.erase(id);
 }
 
@@ -86,6 +87,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
     // version. Should we?
 
     if (sw_list[id].liveness_check() and type == OFPT_ECHO_REQUEST) {
+        fprintf(stderr, "RETURNED ECHO\n");
         // Just change the type and send back
         ((uint8_t*) data)[1] = OFPT_ECHO_REPLY;
         c->send(data, ntohs(((uint16_t*) data)[1]));
@@ -123,6 +125,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
     }
 
     if (sw_list[id].liveness_check() and type == OFPT_ECHO_REPLY) {
+        fprintf(stderr, "ECHO REPLY RECEIVED\n");
         if (ntohl(((uint32_t*) data)[1]) == ECHO_XID) {
             cc->set_alive(true);
         }
@@ -228,6 +231,7 @@ void OFClient::free_data(void* data) {
 }
 
 void* OFClient::send_echo(void* arg) {
+    fprintf(stderr, "SENT ECHO \n");
     OFConnection* cc = static_cast<OFConnection*>(arg);
 
     if (!cc->is_alive()) { //ERASE?
