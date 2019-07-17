@@ -94,10 +94,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         // ((uint32_t*) msg)[1] = ((uint32_t*) data)[1];
         // // TODO: copy echo data
         // c->send(msg, 8);
-        if (ntohl(((uint32_t*) data)[1]) == ECHO_XID) {
-            cc->reset_echo_counter(sw_list[id].echo_attempts());
-        }
-
+        c->send(data, ntohs(((uint16_t*) data)[1]));
         if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
 
