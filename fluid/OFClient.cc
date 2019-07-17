@@ -135,7 +135,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
             cc->set_alive(true);
         }
 
-        fprintf(stderr, "GOT REPLY \n");
+        fprintf(stderr, "GOT REPLY  \n");
 
         if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
