@@ -62,9 +62,9 @@ bool BaseOFClient::add_connection(int id, const std::string& address,
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = inet_addr(address.c_str());
     server.sin_port = htons(port);
-    if (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
+    while (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
         fprintf(stderr, "UNABLE TO CONNECT.\n");
-        return false;
+        // return false;
     }  
     
     EventLoop* event_loop = choose_event_loop();
@@ -74,7 +74,6 @@ bool BaseOFClient::add_connection(int id, const std::string& address,
                                                sock,
                                                false,
                                                address);
-    fprintf(stderr, "CONNECTED.\n");
     return true;
 }
 

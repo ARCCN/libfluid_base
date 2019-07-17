@@ -99,6 +99,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
     }
 
     if (sw_list[id].handshake() and type == OFPT_HELLO) {
+        fprintf(stderr, "SAY HELLO.\n");
         uint8_t version = ((uint8_t*) data)[0];
         if (not this->sw_list[id].supported_versions() & (1 << (version - 1))) {
             uint8_t msg[12];
