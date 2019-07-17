@@ -86,16 +86,11 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
     // version. Should we?
 
     if (sw_list[id].liveness_check() and type == OFPT_ECHO_REQUEST) {
-        uint8_t msg[8];
-        memset((void*) msg, 0, 8);
-        msg[0] = ((uint8_t*) data)[0];
-        msg[1] = OFPT_ECHO_REPLY;
-        ((uint16_t*) msg)[1] = htons(8);
-        ((uint32_t*) msg)[1] = ((uint32_t*) data)[1];
-        // TODO: copy echo data
-        c->send(msg, 8);
+        // Just change the type and send back
+        ((uint8_t*) data)[1] = OFPT_ECHO_REPLY;
+        c->send(data, ntohs(((uint16_t*) data)[1]));
 
-        if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
+        if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
     }
 
     if (sw_list[id].handshake() and type == OFPT_HELLO) {
@@ -248,7 +243,7 @@ void* OFClient::send_echo(void* arg) {
     ((uint16_t*) msg)[1] = htons(8);
     ((uint32_t*) msg)[1] = htonl(ECHO_XID);
 
-    cc->set_alive(false);//????
+    // cc->set_alive(false);//????
     cc->send(msg, 8);
 
     return NULL;
