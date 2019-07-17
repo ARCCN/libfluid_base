@@ -96,7 +96,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         // c->send(msg, 8);
 
 
-        fprintf(stderr, "SEND REPLY \n")
+        fprintf(stderr, "SEND REPLY \n");
         c->send(data, ntohs(((uint16_t*) data)[1]));
         if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
