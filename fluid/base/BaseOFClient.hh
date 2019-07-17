@@ -59,7 +59,7 @@ public:
     @param address address to connect to
     @param port port to connect to
     */
-    virtual void add_connection(int id, const std::string& address, int port);
+    virtual bool add_connection(int id, const std::string& address, int port);
     virtual void remove_connection(int id);
     /**
     Stop the client. It will close the connection and signal the event loop to

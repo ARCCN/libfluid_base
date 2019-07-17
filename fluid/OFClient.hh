@@ -60,7 +60,7 @@ public:
     @param address address to connect to
     @param port port to connect to
     */
-    virtual void add_connection(int id, const std::string& address, int port,
+    virtual bool add_connection(int id, const std::string& address, int port,
                             OFServerSettings ofsc);
     virtual void remove_connection(int id);
     

@@ -45,7 +45,7 @@ BaseOFClient::~BaseOFClient() {
     }
 }
 
-void BaseOFClient::add_connection(int id, const std::string& address,
+bool BaseOFClient::add_connection(int id, const std::string& address,
                                   int port) {
 
     // client_conn_info[id].id = id;
@@ -54,7 +54,7 @@ void BaseOFClient::add_connection(int id, const std::string& address,
     int sock;
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
         fprintf(stderr, "Error creating socket");
-        return;
+        return false;
     }
 
     struct sockaddr_in server;
@@ -67,7 +67,7 @@ void BaseOFClient::add_connection(int id, const std::string& address,
         // Retry to connect after 100 milliseconds
         // usleep(100);
         fprintf(stderr, "Connection Failed");
-    return;
+        return false;
     }
     
     EventLoop* event_loop = choose_event_loop();
@@ -77,6 +77,7 @@ void BaseOFClient::add_connection(int id, const std::string& address,
                                                sock,
                                                false,
                                                address);
+    return true;
 }
 
 void BaseOFClient::remove_connection(int id) {
