@@ -74,6 +74,7 @@ bool BaseOFClient::add_connection(int id, const std::string& address,
                                                sock,
                                                false,
                                                address);
+    fprintf(stderr, "CONNECTED.\n");
     return true;
 }
 
