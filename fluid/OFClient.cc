@@ -90,7 +90,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         ((uint8_t*) data)[1] = OFPT_ECHO_REPLY;
         c->send(data, ntohs(((uint16_t*) data)[1]));
 
-        if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
+        if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
 
     if (sw_list[id].handshake() and type == OFPT_HELLO) {
