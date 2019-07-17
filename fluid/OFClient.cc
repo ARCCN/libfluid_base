@@ -94,6 +94,9 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         // ((uint32_t*) msg)[1] = ((uint32_t*) data)[1];
         // // TODO: copy echo data
         // c->send(msg, 8);
+
+
+        fprintf(stderr, "SEND REPLY \n")
         c->send(data, ntohs(((uint16_t*) data)[1]));
         if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
@@ -131,6 +134,8 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         if (ntohl(((uint32_t*) data)[1]) == ECHO_XID) {
             cc->set_alive(true);
         }
+
+        fprintf(stderr, "GOT REPLY \n")
 
         if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
