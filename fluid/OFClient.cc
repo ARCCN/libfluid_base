@@ -42,7 +42,7 @@ bool OFClient::add_connection(int id, const std::string& address, int port,
         return false;
     }
 
-    return false;
+    return true;
 }
 
 void OFClient::remove_connection(int id){
