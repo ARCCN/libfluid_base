@@ -37,12 +37,12 @@ bool OFClient::start() {
 
 bool OFClient::add_connection(int id, const std::string& address, int port,
                             OFServerSettings ofsc) {
-    this->sw_list[id] = ofsc;
+    // this->sw_list[id] = ofsc;
     // if (!BaseOFClient::add_connection(id, address, port)) {
     //     return false;
     // }
 
-    return true;
+    return false;
 }
 
 void OFClient::remove_connection(int id){
