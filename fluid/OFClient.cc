@@ -98,7 +98,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         ((uint8_t*) data)[1] = OFPT_ECHO_REPLY;
         c->send(data, htons(((uint16_t*) data)[1]));
 
-        fprintf(stderr, "SEND REPLY\n");
+        fprintf(stderr, "SEND REPLYY\n");
         if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
 
