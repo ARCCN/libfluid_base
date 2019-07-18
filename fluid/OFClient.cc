@@ -38,6 +38,7 @@ bool OFClient::start() {
 bool OFClient::add_connection(int id, const std::string& address, int port,
                             OFServerSettings ofsc) {
     this->sw_list[id] = ofsc;
+    fprintf(stderr, "TEST\n");
     if (!BaseOFClient::add_connection(id, address, port)) {
         return false;
     }
@@ -86,15 +87,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
     // version. Should we?
 
     if (sw_list[id].liveness_check() and type == OFPT_ECHO_REQUEST) {
-        // uint8_t msg[8];
-        // memset((void*) msg, 0, 8);
-        // msg[0] = ((uint8_t*) data)[0];
-        // msg[1] = OFPT_ECHO_REPLY;
-        // ((uint16_t*) msg)[1] = htons(8);
-        // ((uint32_t*) msg)[1] = ((uint32_t*) data)[1];
-        // // TODO: copy echo data
-        // c->send(msg, 8);
-
+        // Just change the type and send back dont forget htons
         ((uint8_t*) data)[1] = OFPT_ECHO_REPLY;
         c->send(data, htons(((uint16_t*) data)[1]));
 
