@@ -38,7 +38,6 @@ bool OFClient::start() {
 bool OFClient::add_connection(int id, const std::string& address, int port,
                             OFServerSettings ofsc) {
     this->sw_list[id] = ofsc;
-    fprintf(stderr, "TEST\n");
     if (!BaseOFClient::add_connection(id, address, port)) {
         return false;
     }
@@ -91,7 +90,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         ((uint8_t*) data)[1] = OFPT_ECHO_REPLY;
         c->send(data, htons(((uint16_t*) data)[1]));
 
-        fprintf(stderr, "SEND REPLYY\n");
+        fprintf(stderr, "SEND REPLY\n");
         if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
 

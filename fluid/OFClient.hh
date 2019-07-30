@@ -62,6 +62,11 @@ public:
     */
     virtual bool add_connection(int id, const std::string& address, int port,
                             OFServerSettings ofsc);
+    /**
+    remove connecton by id
+
+    @param id connection id
+    */
     virtual void remove_connection(int id);
     
     /**
