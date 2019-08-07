@@ -21,7 +21,6 @@ struct EventLoopThread {
 struct ConnectionInfo {
     int id;
     int sock;
-    // std::string address; //shall we copy a string???
     int port;
     EventLoop* event_loop;
     BaseOFConnection *c;
@@ -43,6 +42,7 @@ public:
                       round-robin fashion.
     */
     BaseOFClient(int thread_num = 1);
+    virtual void add_threads(int thread_num);
 
     ~BaseOFClient();
 
@@ -60,7 +60,6 @@ public:
     @param port port to connect to
     */
     virtual bool add_connection(int id, const std::string& address, int port);
-    virtual void remove_connection(int id);
     /**
     Stop the client. It will close the connection and signal the event loop to
     stop running.
@@ -81,7 +80,6 @@ public:
 
 private:
     std::vector<EventLoopThread> event_loop_threads;
-    // std::map<int, ConnectionInfo> client_conn_info; // semafors?
     int current_event_loop;
 
     inline pthread_t* get_thread(int loop_id);

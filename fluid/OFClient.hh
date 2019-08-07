@@ -45,6 +45,8 @@ public:
     */
     OFClient(int thread_num = 1);
 
+    virtual void add_threads(int thread_num);
+
     virtual ~OFClient();
 
     /**

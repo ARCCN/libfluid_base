@@ -37,7 +37,14 @@ BaseOFClient::BaseOFClient(const int thread_num) {
     }
     current_event_loop = 0;
 }
-
+void BaseOFClient::add_threads(int thread_num) {
+    for (int loop_id = 1; loop_id <= thread_num; loop_id++) {
+        EventLoopThread loop_thread;
+        loop_thread.thread = pthread_t();
+        loop_thread.loop = new EventLoop(loop_id);
+        event_loop_threads.push_back(loop_thread);
+    }
+}
 BaseOFClient::~BaseOFClient() {
     for (int loop_id = 0; loop_id < event_loop_threads.size(); loop_id++) {
         EventLoop* loop = get_loop(loop_id);
@@ -47,10 +54,6 @@ BaseOFClient::~BaseOFClient() {
 
 bool BaseOFClient::add_connection(int id, const std::string& address,
                                   int port) {
-
-    // client_conn_info[id].id = id;
-    // client_conn_info[id] = ConnectionInfo();
-    // client_conn_info[id].port = port;
     int sock;
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
         fprintf(stderr, "Error creating socket");
@@ -65,7 +68,6 @@ bool BaseOFClient::add_connection(int id, const std::string& address,
     if (connect(sock, (struct sockaddr *) 
         &server, sizeof(server)) < 0) {
         // Retry to connect after 100 milliseconds
-        // usleep(100);
         fprintf(stderr, "Connection Failed");
         return false;
     }
@@ -80,16 +82,7 @@ bool BaseOFClient::add_connection(int id, const std::string& address,
     return true;
 }
 
-void BaseOFClient::remove_connection(int id) {
-    // client_conn_info[id].c->close();
-    // delete client_conn_info[id].c;
-    // client_conn_info[id].event_loop->stop(); 
-    // delete client_conn_info[id].event_loop;
-    // client_conn_info.erase(id);
-}
-
 bool BaseOFClient::start() {
-    fprintf(stderr, "base of client started \n \n");
     // Start one thread for each event loop
     for (int loop_id = 0; loop_id < event_loop_threads.size(); loop_id++) {
         // Create thread for connections

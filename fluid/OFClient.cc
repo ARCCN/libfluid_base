@@ -19,6 +19,10 @@ OFClient::OFClient(int thread_num) :
     pthread_mutex_init(&ofconnections_lock, NULL);
 }
 
+void OFClient::add_threads(int thread_num){
+    BaseOFClient::add_threads(thread_num);
+}
+
 OFClient::~OFClient() {
     this->lock_ofconnections();
     while (!this->ofconnections.empty()) {
@@ -128,7 +132,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
             cc->set_alive(true);
         }
 
-        fprintf(stderr, "GOT REPLY  \n");
+        fprintf(stderr, "GOT REPLY\n"); //debug
 
         if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
@@ -197,7 +201,7 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
     int conn_id = c->get_id();
 
     if (event_type == BaseOFConnection::EVENT_UP) {
-        fprintf(stderr, "OFCLIENT EVENT_UP EVENT_UP \n");
+        fprintf(stderr, "OFCLIENT EVENT_UP \n"); //debug
         if (sw_list[conn_id].handshake()) {
             struct ofp_hello msg;
             msg.header.version = this->sw_list[conn_id].max_supported_version();
@@ -215,7 +219,7 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
         connection_callback(cc, OFConnection::EVENT_STARTED);
     }
     else if (event_type == BaseOFConnection::EVENT_DOWN) {
-        fprintf(stderr, "OFCLIENT EVENT_DOWN OFCLIENT EVENT_DOWN \n");
+        fprintf(stderr, "OFCLIENT EVENT_DOWN\n"); //debug
         sw_list.erase(conn_id);
         cc = get_ofconnection(conn_id);
         connection_callback(cc, OFConnection::EVENT_CLOSED);
@@ -245,8 +249,7 @@ void* OFClient::send_echo(void* arg) {
     msg[1] = OFPT_ECHO_REQUEST;
     ((uint16_t*) msg)[1] = htons(8);
     ((uint32_t*) msg)[1] = htonl(ECHO_XID);
-
-    // cc->set_alive(false);//????
+    
     cc->send(msg, 8);
 
     return NULL;
