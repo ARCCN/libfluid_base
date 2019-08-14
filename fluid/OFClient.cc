@@ -83,6 +83,9 @@ OFConnection* OFClient::get_ofconnection(int id) {
 }
 
 void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len) {
+    if (type == OFPT_BARRIER_REQUEST) {
+        fprintf(stderr, "GOT BARRIER\n");
+    }
     uint8_t type = ((uint8_t*) data)[1];
     OFConnection* cc = (OFConnection*) c->get_manager();
     int id = c->get_id();
