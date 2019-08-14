@@ -12,6 +12,17 @@ uint64_t htonll(uint64_t n)
 }
 
 
+uint64_t ntohll(uint64_t n)
+{
+#if __BYTE_ORDER == __BIG_ENDIAN
+    return n; 
+#else
+    return (((uint64_t)ntohl(n)) << 32) + ntohl(n >> 32);
+#endif
+}
+
+
+
 namespace fluid_base {
 
 OFClient::OFClient(int thread_num) :
@@ -85,9 +96,9 @@ OFConnection* OFClient::get_ofconnection(int id) {
 void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len) {
 
     uint8_t type = ((uint8_t*) data)[1];
-    if (type == 20) {
-        fprintf(stderr, "GOT BARRIER\n");
-    }
+    
+    printf(stderr, "GOT message\n");
+    
     OFConnection* cc = (OFConnection*) c->get_manager();
     int id = c->get_id();
     // We trust that the other end is using the negotiated protocol
@@ -127,8 +138,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
                 c->send(&msg, 8);
             }
         }
-
-        if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
+         goto done;
     }
 
     if (sw_list[id].liveness_check() and type == OFPT_ECHO_REPLY) {
