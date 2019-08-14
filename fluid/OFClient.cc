@@ -97,7 +97,7 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
 
     uint8_t type = ((uint8_t*) data)[1];
     
-    printf(stderr, "GOT message\n");
+    // printf(stderr, "GOT message\n");
     
     OFConnection* cc = (OFConnection*) c->get_manager();
     int id = c->get_id();
