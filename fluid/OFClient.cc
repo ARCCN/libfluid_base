@@ -96,7 +96,7 @@ OFConnection* OFClient::get_ofconnection(int id) {
 void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len) {
 
     uint8_t type = ((uint8_t*) data)[1];
-    
+    if (type == 20) {
         fprintf(stderr, "GOT BARRIER\n");
     }
     OFConnection* cc = (OFConnection*) c->get_manager();
