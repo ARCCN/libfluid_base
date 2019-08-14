@@ -80,14 +80,15 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
 
         if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
     }
-    int flag = 0;
+    int flagg = 0;
     // Handle hello messages
     if (ofsc.handshake() and type == OFPT_HELLO) {
-        if (flag == 1){
+        if (flagg == 1){
             fprintf(stderr, "HELLO STR\n");
-            goto done;
+            if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
         }
-        flag == 1;
+
+        flagg == 1;
         uint32_t client_supported_versions;
         uint32_t overlap;
         uint8_t max_version = this->ofsc.max_supported_version();
