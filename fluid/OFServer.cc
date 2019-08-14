@@ -83,12 +83,12 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
     int flagg = 0;
     // Handle hello messages
     if (ofsc.handshake() and type == OFPT_HELLO) {
-        if (flagg == 1){
-            fprintf(stderr, "HELLO STR\n");
-            // if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
-            this->free_data(data);
-            return;
-        }
+        // if (flagg == 1){
+        //     fprintf(stderr, "HELLO STR\n");
+        //     // if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
+        //     this->free_data(data);
+        //     return;
+        // }
 
         flagg == 1;
         uint32_t client_supported_versions;
