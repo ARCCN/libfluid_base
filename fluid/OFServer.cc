@@ -82,7 +82,6 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
     }
     // Handle hello messages
     if (ofsc.handshake() and type == OFPT_HELLO) {
-        flagg == 1;
         uint32_t client_supported_versions;
         uint32_t overlap;
         uint8_t max_version = this->ofsc.max_supported_version();
