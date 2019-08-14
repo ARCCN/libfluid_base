@@ -80,16 +80,8 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
 
         if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
     }
-    int flagg = 0;
     // Handle hello messages
     if (ofsc.handshake() and type == OFPT_HELLO) {
-        // if (flagg == 1){
-        //     fprintf(stderr, "HELLO STR\n");
-        //     // if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
-        //     this->free_data(data);
-        //     return;
-        // }
-
         flagg == 1;
         uint32_t client_supported_versions;
         uint32_t overlap;
