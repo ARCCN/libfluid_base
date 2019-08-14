@@ -97,8 +97,8 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
 
     uint8_t type = ((uint8_t*) data)[1];
     
-    // printf(stderr, "GOT message\n");
-    
+        fprintf(stderr, "GOT BARRIER\n");
+    }
     OFConnection* cc = (OFConnection*) c->get_manager();
     int id = c->get_id();
     // We trust that the other end is using the negotiated protocol
@@ -138,7 +138,8 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
                 c->send(&msg, 8);
             }
         }
-         goto done;
+
+        if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
 
     if (sw_list[id].liveness_check() and type == OFPT_ECHO_REPLY) {
