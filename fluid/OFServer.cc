@@ -163,7 +163,7 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
         cc->send(&reply, sizeof(reply));
 
         if (ofsc.liveness_check())
-            c->add_timed_callback(send_echo, ofsc.echo_interval() * 1000, cc);
+            c->add_timed_callback(send_echo, ofsc.echo_interval() * 10, cc);
         connection_callback(cc, OFConnection::EVENT_ESTABLISHED);
 
         if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
