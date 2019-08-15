@@ -290,8 +290,9 @@ void OFServer::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
 
 /** This method will periodically send echo requests. */
 void* OFServer::send_echo(void* arg) {
+
+    fprintf(stderr, "S send REQUEST con_id\n"); //debug
     OFConnection* cc = static_cast<OFConnection*>(arg);
-    fprintf(stderr, "S send REQUEST con_id%d\n", cc->get_id()); //debug
     if (!cc->decrease_echo_counter()) { // decrease counter and check that attempts >0
         cc->set_alive(false);
         cc->close();
