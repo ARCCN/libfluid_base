@@ -289,12 +289,12 @@ void OFServer::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
 void* OFServer::send_echo(void* arg) {
     OFConnection* cc = static_cast<OFConnection*>(arg);
 
-    if (!cc->decrease_echo_counter()) { // decrease counter and check that attempts >0
-        cc->set_alive(false);
-        cc->close();
-        cc->get_ofhandler()->connection_callback(cc, OFConnection::EVENT_DEAD);
-        return NULL;
-    }
+    // if (!cc->decrease_echo_counter()) { // decrease counter and check that attempts >0
+    //     cc->set_alive(false);
+    //     cc->close();
+    //     cc->get_ofhandler()->connection_callback(cc, OFConnection::EVENT_DEAD);
+    //     return NULL;
+    // }
 
     uint8_t msg[8];
     memset((void*) msg, 0, 8);
