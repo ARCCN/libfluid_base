@@ -223,6 +223,7 @@ void BaseOFConnection::send(void* data, size_t len) {
 }
 
 void BaseOFConnection::add_timed_callback(void* (*cb)(void*), int interval, void* arg, bool is_infinite) {
+    fprintf(stderr, "STARTED REQUESTS\n"); //debug
     struct timeval tv = { interval / 1000, (interval % 1000) * 1000 };
     struct timed_callback* tc = new struct timed_callback;
     tc->cb = cb;
