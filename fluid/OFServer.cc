@@ -171,9 +171,11 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
 
     // Handle feature replies
     if (ofsc.handshake() and ofsc.is_controller() and type == OFPT_FEATURES_REPLY) {
+
+        fprintf(stderr, "GOT FEATURES%d\n", cc->get_id()); //debug
         cc->set_version(((uint8_t*) data)[0]);
         cc->set_state(OFConnection::STATE_RUNNING);
-        // if (ofsc.liveness_check())
+        if (ofsc.liveness_check())
             c->add_timed_callback(send_echo, ofsc.echo_interval() * 1000, cc);
         connection_callback(cc, OFConnection::EVENT_ESTABLISHED);
 
@@ -289,12 +291,12 @@ void OFServer::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
 void* OFServer::send_echo(void* arg) {
     OFConnection* cc = static_cast<OFConnection*>(arg);
 
-    // if (!cc->decrease_echo_counter()) { // decrease counter and check that attempts >0
-    //     cc->set_alive(false);
-    //     cc->close();
-    //     cc->get_ofhandler()->connection_callback(cc, OFConnection::EVENT_DEAD);
-    //     return NULL;
-    // }
+    if (!cc->decrease_echo_counter()) { // decrease counter and check that attempts >0
+        cc->set_alive(false);
+        cc->close();
+        cc->get_ofhandler()->connection_callback(cc, OFConnection::EVENT_DEAD);
+        return NULL;
+    }
 
     uint8_t msg[8];
     memset((void*) msg, 0, 8);
