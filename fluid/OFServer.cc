@@ -173,7 +173,7 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
     if (ofsc.handshake() and ofsc.is_controller() and type == OFPT_FEATURES_REPLY) {
         cc->set_version(((uint8_t*) data)[0]);
         cc->set_state(OFConnection::STATE_RUNNING);
-        if (ofsc.liveness_check())
+        // if (ofsc.liveness_check())
             c->add_timed_callback(send_echo, ofsc.echo_interval() * 1000, cc);
         connection_callback(cc, OFConnection::EVENT_ESTABLISHED);
 
