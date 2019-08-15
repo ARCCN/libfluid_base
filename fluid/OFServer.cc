@@ -75,7 +75,6 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
     // Handle echo requests
     if (type == OFPT_ECHO_REQUEST) {
         // Just change the type and send back
-        fprintf(stderr, "SGOT REQUEST\n"); //debug
         ((uint8_t*) data)[1] = OFPT_ECHO_REPLY;
         c->send(data, ntohs(((uint16_t*) data)[1]));
 
@@ -301,6 +300,7 @@ void* OFServer::send_echo(void* arg) {
     ((uint16_t*) msg)[1] = htons(8);
     ((uint32_t*) msg)[1] = htonl(ECHO_XID);
 
+    fprintf(stderr, "S send REQUEST  con_id%d\n", cc->get_id()); //debug
     cc->send(msg, 8);
 
     return NULL;
