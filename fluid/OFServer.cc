@@ -75,7 +75,7 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
     // Handle echo requests
     if (type == OFPT_ECHO_REQUEST) {
         // Just change the type and send back
-        fprintf(stderr, "GOT REQUEST\n"); //debug
+        fprintf(stderr, "SGOT REQUEST\n"); //debug
         ((uint8_t*) data)[1] = OFPT_ECHO_REPLY;
         c->send(data, ntohs(((uint16_t*) data)[1]));
 
@@ -135,7 +135,7 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
 
     // Handle echo replies (by registering them)
     if (ofsc.liveness_check() and type == OFPT_ECHO_REPLY) {
-        fprintf(stderr, "GOT REPLY\n"); //debug
+        fprintf(stderr, "SGOT REPLY\n"); //debug
         if (ntohl(((uint32_t*) data)[1]) == ECHO_XID) {
             cc->reset_echo_counter(ofsc.echo_attempts());
         }
