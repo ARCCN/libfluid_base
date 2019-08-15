@@ -73,8 +73,11 @@ void OFConnection::add_timed_callback(void* (*cb)(void*),
                                       int interval,
                                       void* arg,
                                       bool is_infinite) {
-    if (this->conn != NULL)
+    if (this->conn != NULL){
+
+        fprintf(stderr, "STARTED REQUESTS%d\n", cc->get_id()); //debug
         this->conn->add_timed_callback(cb, interval, arg, is_infinite);
+    }
 }
 
 void* OFConnection::get_application_data() const {
