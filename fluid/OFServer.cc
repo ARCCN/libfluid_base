@@ -63,6 +63,9 @@ void OFServer::set_config(OFServerSettings ofsc) {
 void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len) {
     uint8_t version = ((uint8_t*) data)[0];
     uint8_t type = ((uint8_t*) data)[1];
+
+    fprintf(stderr, "SV GOT MESAGE %d\n", type);
+    
     OFConnection* cc = (OFConnection*) c->get_manager();
 
     // We trust that the other end is using the negotiated protocol version

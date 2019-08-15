@@ -95,10 +95,11 @@ OFConnection* OFClient::get_ofconnection(int id) {
 
 void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len) {
 
+
     uint8_t type = ((uint8_t*) data)[1];
-    if (type == 20) {
-        fprintf(stderr, "GOT BARRIER\n");
-    }
+    
+    fprintf(stderr, "CL GOT MESAGE %d\n", type);
+    
     OFConnection* cc = (OFConnection*) c->get_manager();
     int id = c->get_id();
     // We trust that the other end is using the negotiated protocol
