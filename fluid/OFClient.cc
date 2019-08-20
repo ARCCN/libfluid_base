@@ -98,8 +98,6 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
 
     uint8_t type = ((uint8_t*) data)[1];
     
-    fprintf(stderr, "CL GOT MESAGE %d\n", type);
-    
     OFConnection* cc = (OFConnection*) c->get_manager();
     int id = c->get_id();
     // We trust that the other end is using the negotiated protocol
@@ -109,8 +107,6 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         // Just change the type and send back dont forget htons
         ((uint8_t*) data)[1] = OFPT_ECHO_REPLY;
         c->send(data, htons(((uint16_t*) data)[1]));
-
-        fprintf(stderr, "SEND REPLY\n");
         if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
 
@@ -147,8 +143,6 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
         if (ntohl(((uint32_t*) data)[1]) == ECHO_XID) {
             cc->set_alive(true);
         }
-
-        fprintf(stderr, "GOT REPLY\n"); //debug
 
         if (sw_list[id].dispatch_all_messages()) goto dispatch; else goto done;
     }
@@ -217,7 +211,6 @@ void OFClient::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
     int conn_id = c->get_id();
 
     if (event_type == BaseOFConnection::EVENT_UP) {
-        fprintf(stderr, "OFCLIENT EVENT_UP \n"); //debug
         if (sw_list[conn_id].handshake()) {
             struct ofp_hello msg;
             msg.header.version = this->sw_list[conn_id].max_supported_version();

@@ -63,8 +63,6 @@ void OFServer::set_config(OFServerSettings ofsc) {
 void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len) {
     uint8_t version = ((uint8_t*) data)[0];
     uint8_t type = ((uint8_t*) data)[1];
-
-    fprintf(stderr, "SV GOT MESAGE %d\n", type);
     
     OFConnection* cc = (OFConnection*) c->get_manager();
 
@@ -137,7 +135,6 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
 
     // Handle echo replies (by registering them)
     if (ofsc.liveness_check() and type == OFPT_ECHO_REPLY) {
-        fprintf(stderr, "SGOT REPLY\n"); //debug
         if (ntohl(((uint32_t*) data)[1]) == ECHO_XID) {
             cc->reset_echo_counter(ofsc.echo_attempts());
         }
@@ -172,11 +169,9 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
     // Handle feature replies
     if (ofsc.handshake() and ofsc.is_controller() and type == OFPT_FEATURES_REPLY) {
 
-        fprintf(stderr, "GOT FEATURES%d\n", cc->get_id()); //debug
         cc->set_version(((uint8_t*) data)[0]);
         cc->set_state(OFConnection::STATE_RUNNING);
-        fprintf(stderr, "callback%d\n", cc->get_id()); //debug
-        // if (ofsc.liveness_check())
+        if (ofsc.liveness_check())
             c->add_timed_callback(send_echo, ofsc.echo_interval() * 10, cc);
         connection_callback(cc, OFConnection::EVENT_ESTABLISHED);
 
@@ -291,7 +286,6 @@ void OFServer::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
 /** This method will periodically send echo requests. */
 void* OFServer::send_echo(void* arg) {
 
-    fprintf(stderr, "S send REQUEST con_id\n"); //debug
     OFConnection* cc = static_cast<OFConnection*>(arg);
     if (!cc->decrease_echo_counter()) { // decrease counter and check that attempts >0
         cc->set_alive(false);
