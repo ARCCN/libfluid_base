@@ -103,7 +103,6 @@ void OFClient::base_message_callback(BaseOFConnection* c, void* data, size_t len
     // We trust that the other end is using the negotiated protocol
     // version. Should we?
 
-    fprintf(stderr, "ID%d\n", id); //debug
     if (sw_list[id].liveness_check() and type == OFPT_ECHO_REQUEST) {
         // Just change the type and send back dont forget htons
         ((uint8_t*) data)[1] = OFPT_ECHO_REPLY;
