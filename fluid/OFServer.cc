@@ -65,6 +65,7 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
     uint8_t type = ((uint8_t*) data)[1];
     
     OFConnection* cc = (OFConnection*) c->get_manager();
+    fprintf(stderr, "ID%d\n", cc->get_id()); //debug
 
     // We trust that the other end is using the negotiated protocol version
     // after the handshake is done. Should we?
