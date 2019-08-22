@@ -223,7 +223,6 @@ void BaseOFConnection::send(void* data, size_t len) {
 }
 
 void BaseOFConnection::add_timed_callback(void* (*cb)(void*), int interval, void* arg, bool is_infinite) {
-    fprintf(stderr, "STARTED REQUESTS\n"); //debug
     struct timeval tv = { interval / 1000, (interval % 1000) * 1000 };
     struct timed_callback* tc = new struct timed_callback;
     tc->cb = cb;
@@ -269,20 +268,10 @@ void BaseOFConnection::notify_msg_cb(void* data, size_t n) {
 }
 
 void BaseOFConnection::notify_conn_cb(BaseOFConnection::Event event_type) {
-    if (event_type == BaseOFConnection::EVENT_CLOSED) {
-        fprintf(stderr, "BaseOFConnection::EVENT_CLOSED \n");
-    }
-    if (event_type == BaseOFConnection::EVENT_DOWN) {
-        fprintf(stderr, "BaseOFConnection::EVENT_DOWN \n");
-    }
-    if (event_type == BaseOFConnection::EVENT_UP) {
-        fprintf(stderr, "BaseOFConnection::EVENT_UP \n");
-    }
     ofhandler->base_connection_callback(this, event_type);
 }
 
 void BaseOFConnection::do_close() {
-    fprintf(stderr, "DO_CLOSE\n");
     // Stop all timed callbacks
     struct timed_callback* tc;
     for(std::vector<struct timed_callback*>::iterator it = timed_callbacks.begin();
@@ -322,7 +311,6 @@ void BaseOFConnection::LibEventBaseOFConnection::event_cb(struct bufferevent *be
     if (events & BEV_EVENT_ERROR)
         perror("Connection error");
     if (events & (BEV_EVENT_EOF | BEV_EVENT_ERROR)) {
-        fprintf(stderr, "BEV ERROR|EOF EVENT DOWN\n");
         bufferevent_disable(bev, EV_READ|EV_WRITE);
         c->notify_conn_cb(BaseOFConnection::EVENT_DOWN);
 
@@ -360,7 +348,6 @@ void BaseOFConnection::LibEventBaseOFConnection::read_cb(struct bufferevent *bev
 }
 
 void BaseOFConnection::LibEventBaseOFConnection::close_cb(int fd, short which, void *arg) {
-    fprintf(stderr, "CLOSE_CB\n");
     BaseOFConnection* c = static_cast<BaseOFConnection*>(arg);
     c->do_close();
 

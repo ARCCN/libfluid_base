@@ -74,8 +74,6 @@ void OFConnection::add_timed_callback(void* (*cb)(void*),
                                       void* arg,
                                       bool is_infinite) {
     if (this->conn != NULL){
-
-        fprintf(stderr, "STARTED REQUESTS\n"); //debug
         this->conn->add_timed_callback(cb, interval, arg, is_infinite);
     }
 }

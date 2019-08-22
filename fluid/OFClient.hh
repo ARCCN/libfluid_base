@@ -36,7 +36,7 @@ to implement further functionality.
 */
 class OFClient : private BaseOFClient, public OFHandler {
 public:
-    /**
+    /*
     Create a OFClient.
 
     @param thread_num number of event loops to run. Connections will be
@@ -44,6 +44,9 @@ public:
                       round-robin fashion.
     */
     OFClient(int thread_num = 1);
+    /*
+    Adds new threads to OFClient
+    */
 
     virtual void add_threads(int thread_num);
 
@@ -94,7 +97,6 @@ public:
     void free_data(void* data);
 
 protected:
-    //OFConnection* conn;
     std::map<int, OFConnection*> ofconnections;
     pthread_mutex_t ofconnections_lock;
 

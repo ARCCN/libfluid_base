@@ -68,7 +68,7 @@ bool BaseOFClient::add_connection(int id, const std::string& address,
     if (connect(sock, (struct sockaddr *) 
         &server, sizeof(server)) < 0) {
         // Retry to connect after 100 milliseconds
-        fprintf(stderr, "Connection Failed");
+        fprintf(stderr, "Connection %s %d\n Failed", address, port);
         return false;
     }
     
