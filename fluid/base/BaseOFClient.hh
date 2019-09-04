@@ -5,6 +5,7 @@
 #include <pthread.h>
 
 #include <string>
+#include <map>
 #include <vector>
 
 #include <fluid/base/EventLoop.hh>
@@ -15,6 +16,14 @@ namespace fluid_base {
 struct EventLoopThread {
     pthread_t thread;
     EventLoop* loop;
+};
+
+struct ConnectionInfo {
+    int id;
+    int sock;
+    int port;
+    EventLoop* event_loop;
+    BaseOFConnection *c;
 };
 
 /**
@@ -33,6 +42,7 @@ public:
                       round-robin fashion.
     */
     BaseOFClient(int thread_num = 1);
+    virtual void add_threads(int thread_num);
 
     ~BaseOFClient();
 
@@ -49,8 +59,7 @@ public:
     @param address address to connect to
     @param port port to connect to
     */
-    virtual void add_connection(int id, const std::string& address, int port);
-
+    virtual bool add_connection(int id, const std::string& address, int port);
     /**
     Stop the client. It will close the connection and signal the event loop to
     stop running.

@@ -36,7 +36,7 @@ to implement further functionality.
 */
 class OFClient : private BaseOFClient, public OFHandler {
 public:
-    /**
+    /*
     Create a OFClient.
 
     @param thread_num number of event loops to run. Connections will be
@@ -44,6 +44,11 @@ public:
                       round-robin fashion.
     */
     OFClient(int thread_num = 1, OFServerSettings ofsc = OFServerSettings());
+    /*
+    Adds new threads to OFClient
+    */
+
+    virtual void add_threads(int thread_num);
 
     virtual ~OFClient();
 
@@ -60,8 +65,16 @@ public:
     @param address address to connect to
     @param port port to connect to
     */
-    virtual void add_connection(int id, const std::string& address, int port);
+    virtual bool add_connection(int id, const std::string& address, int port,
+                            OFServerSettings ofsc);
+    bool add_connection(int id, const std::string& address, int port);
+    /**
+    remove connecton by id
 
+    @param id connection id
+    */
+    virtual void remove_connection(int id);
+    
     /**
     Stop the client. It will close the connection, ask the thead handling
     connections to finish.
@@ -85,10 +98,8 @@ public:
     void free_data(void* data);
 
 protected:
-    //OFConnection* conn;
     std::map<int, OFConnection*> ofconnections;
     pthread_mutex_t ofconnections_lock;
-
     inline void lock_ofconnections() {
         pthread_mutex_lock(&ofconnections_lock);
     }
@@ -97,8 +108,21 @@ protected:
         pthread_mutex_unlock(&ofconnections_lock);
     }
 
+    std::map<int, OFServerSettings> ofsc_list;
+    pthread_mutex_t ofsc_list_lock;
+    inline void lock_ofsc_list() {
+        pthread_mutex_lock(&ofsc_list_lock);
+    }
+
+    inline void unlock_ofsc_list() {
+        pthread_mutex_unlock(&ofsc_list_lock);
+    }
+
+    OFServerSettings ofsc_default;
+    
+
 private:
-    OFServerSettings ofsc;
+     
     void base_message_callback(BaseOFConnection* c, void* data, size_t len);
     void base_connection_callback(BaseOFConnection* c, BaseOFConnection::Event event_type);
     static void* send_echo(void* arg);

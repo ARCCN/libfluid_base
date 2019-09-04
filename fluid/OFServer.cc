@@ -63,6 +63,7 @@ void OFServer::set_config(OFServerSettings ofsc) {
 void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len) {
     uint8_t version = ((uint8_t*) data)[0];
     uint8_t type = ((uint8_t*) data)[1];
+    
     OFConnection* cc = (OFConnection*) c->get_manager();
 
     // We trust that the other end is using the negotiated protocol version
@@ -80,10 +81,8 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
 
         if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
     }
-
     // Handle hello messages
     if (ofsc.handshake() and type == OFPT_HELLO) {
-
         uint32_t client_supported_versions;
         uint32_t overlap;
         uint8_t max_version = this->ofsc.max_supported_version();
@@ -143,6 +142,7 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
         if (ofsc.dispatch_all_messages()) goto dispatch; else goto done;
     }
 
+     // the use of this here???
     if (ofsc.handshake() and !ofsc.is_controller() and type == OFPT_FEATURES_REQUEST) {
         struct ofp_switch_features reply;
 
@@ -168,6 +168,7 @@ void OFServer::base_message_callback(BaseOFConnection* c, void* data, size_t len
 
     // Handle feature replies
     if (ofsc.handshake() and ofsc.is_controller() and type == OFPT_FEATURES_REPLY) {
+
         cc->set_version(((uint8_t*) data)[0]);
         cc->set_state(OFConnection::STATE_RUNNING);
         if (ofsc.liveness_check())
@@ -284,8 +285,8 @@ void OFServer::base_connection_callback(BaseOFConnection* c, BaseOFConnection::E
 
 /** This method will periodically send echo requests. */
 void* OFServer::send_echo(void* arg) {
-    OFConnection* cc = static_cast<OFConnection*>(arg);
 
+    OFConnection* cc = static_cast<OFConnection*>(arg);
     if (!cc->decrease_echo_counter()) { // decrease counter and check that attempts >0
         cc->set_alive(false);
         cc->close();
@@ -300,6 +301,7 @@ void* OFServer::send_echo(void* arg) {
     ((uint16_t*) msg)[1] = htons(8);
     ((uint32_t*) msg)[1] = htonl(ECHO_XID);
 
+    
     cc->send(msg, 8);
 
     return NULL;
